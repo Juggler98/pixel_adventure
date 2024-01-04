@@ -17,7 +17,7 @@ class PixelAdventure extends FlameGame
   late final CameraComponent cam;
   Player player = Player(character: 'Mask Dude');
   late JoystickComponent joystick;
-  bool showJoystick = true;
+  bool showJoystick = false;
 
   @override
   FutureOr<void> onLoad() async {
@@ -74,12 +74,12 @@ class PixelAdventure extends FlameGame
       case JoystickDirection.downRight:
       case JoystickDirection.upRight:
       case JoystickDirection.right:
-        player.horizontalMovement = -1;
+        player.horizontalMovement = 1;
         break;
       case JoystickDirection.upLeft:
       case JoystickDirection.downLeft:
       case JoystickDirection.left:
-        player.horizontalMovement = 1;
+        player.horizontalMovement = -1;
         break;
       case JoystickDirection.up:
       case JoystickDirection.down:
