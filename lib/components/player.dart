@@ -3,11 +3,12 @@ import 'dart:async';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
-import 'package:pixel_adventure/components/player_hitbox.dart';
+import 'package:pixel_adventure/components/custom_hitbox.dart';
 import 'package:pixel_adventure/components/utils.dart';
 import 'package:pixel_adventure/pixel_adventure.dart';
 
 import 'collision_block.dart';
+import 'fruit.dart';
 
 enum PlayerState {
   idle,
@@ -17,7 +18,7 @@ enum PlayerState {
 }
 
 class Player extends SpriteAnimationGroupComponent
-    with HasGameRef<PixelAdventure>, KeyboardHandler {
+    with HasGameRef<PixelAdventure>, KeyboardHandler, CollisionCallbacks {
   String character;
 
   Player({
@@ -42,7 +43,7 @@ class Player extends SpriteAnimationGroupComponent
   bool isOnGround = false;
   bool hasJumped = false;
   List<CollisionBlock> collisionBlocks = [];
-  PlayerHitbox hitbox = PlayerHitbox(
+  CustomHitBox hitbox = CustomHitBox(
     offsetX: 10,
     offsetY: 4,
     width: 14,
@@ -85,6 +86,14 @@ class Player extends SpriteAnimationGroupComponent
     hasJumped = keysPressed.contains(LogicalKeyboardKey.space);
 
     return super.onKeyEvent(event, keysPressed);
+  }
+
+  @override
+  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
+    if (other is Fruit) {
+      other.collidedWithPlayer();
+    }
+    super.onCollision(intersectionPoints, other);
   }
 
   void _loadAllAnimations() {
@@ -146,9 +155,9 @@ class Player extends SpriteAnimationGroupComponent
     }
 
     //To avoid jump when falling
-    if (velocity.y > _gravity) {
-      isOnGround = false;
-    }
+    // if (velocity.y > _gravity) {
+    //   isOnGround = false;
+    // }
 
     velocity.x = horizontalMovement * moveSpeed;
     position.x += velocity.x * dt;
